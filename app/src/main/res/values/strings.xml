@@ -15,4 +15,8 @@
     <string name="signup_error_message">Please make sure you enter the Username, Password and Email</string>
     <string name="login_error_message">Please make sure you enter a Username and Password-</string>
     <string name="menu_logout_label">Logout</string>
+    <string name="tab1_fragment_string">TabOne</string>
+    <string name="tab2_fragment_string">TabTwo</string>
+    <string name="tab3_fragment_string">TabThree</string>
+
 </resources>

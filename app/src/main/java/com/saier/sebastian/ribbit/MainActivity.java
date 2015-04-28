@@ -1,7 +1,8 @@
 package com.saier.sebastian.ribbit;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,13 +12,25 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    private FragmentTabHost mTabHost;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+
+        mTabHost.addTab(mTabHost.newTabSpec("tab1").setIndicator("Tab1"),
+                Tab1Fragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("tab2").setIndicator("Tab2"),
+                Tab2Fragment.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("tab3").setIndicator("Tab3"),
+                Tab3Fragment.class, null);
 
         // Check if logged in
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -25,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
             Log.i(TAG, currentUser.getUsername());
         }
         else {
-            navigateToLogin();
+            //navigateToLogin();
         }
     }
 
