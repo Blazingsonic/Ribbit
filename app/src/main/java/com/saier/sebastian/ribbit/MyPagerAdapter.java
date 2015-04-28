@@ -11,21 +11,22 @@ import android.support.v7.widget.RecyclerView;
  */
 public class MyPagerAdapter extends FragmentPagerAdapter {
 
-    private Context mContext;
-
-    public MyPagerAdapter(Context context, FragmentManager fm) {
+    public MyPagerAdapter(FragmentManager fm) {
         super(fm);
-        mContext = context;
     }
 
-
     @Override
-    public Fragment getItem(int position) {
-        return null;
+    public Fragment getItem(int pos) {
+        switch(pos) {
+
+            case 0: return InboxFragment.newInstance("FirstFragment", "Instance 1");
+            case 1: return FriendsFragment.newInstance("SecondFragment", "Instance 1");
+            default: return InboxFragment.newInstance("FirstFragment", "Instance 1");
+        }
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return 3;
     }
 }

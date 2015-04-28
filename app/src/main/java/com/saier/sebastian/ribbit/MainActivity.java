@@ -11,8 +11,13 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.parse.ParseObject;
+import android.view.View;
+import android.widget.Button;
+
 import com.parse.ParseUser;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 public class MainActivity extends FragmentActivity {
 
@@ -20,9 +25,13 @@ public class MainActivity extends FragmentActivity {
 
     private FragmentTabHost mTabHost;
 
+    @InjectView(R.id.editFriendsButton) Button mEditFriendsButton;
+    @InjectView(R.id.logoutButton) Button mLogoutButton;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.inject(this);
 
         ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
@@ -35,29 +44,24 @@ public class MainActivity extends FragmentActivity {
         else {
             //navigateToLogin();
         }
-    }
 
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int pos) {
-            switch(pos) {
-
-                case 0: return FirstFragment.newInstance("FirstFragment, Instance 1");
-                case 1: return SecondFragment.newInstance("SecondFragment, Instance 1");
-                default: return FirstFragment.newInstance("ThirdFragment, Default");
+        mEditFriendsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditFriendsActivity.class);
+                startActivity(intent);
             }
-        }
+        });
 
-        @Override
-        public int getCount() {
-            return 5;
-        }
+        mLogoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser.logOut();
+                navigateToLogin();
+            }
+        });
     }
+
 
     private void navigateToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
