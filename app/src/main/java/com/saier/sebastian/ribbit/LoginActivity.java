@@ -6,13 +6,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class LoginActivity extends ActionBarActivity {
+
+    @InjectView(R.id.usernameText) EditText mUsername;
+    @InjectView(R.id.passwordText) EditText mPassword;
+    @InjectView(R.id.loginButton) Button mLoginButton;
 
     @InjectView(R.id.signUpText) TextView mSignupText;
 
@@ -27,6 +39,51 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() { // How can we use the listener with Butterknife?
+            @Override
+            public void onClick(View v) {
+                // Check the values
+                String username = mUsername.getText().toString(); // toString because the format is 'Editable'
+                String password = mPassword.getText().toString(); // We don't need to initialize these variables with Butterknife
+                                                                  // because they aren't views, but normal Strings in this method
+
+                username = username.trim(); // We don't want any whitespace in the values
+                password = password.trim();
+
+                if (username.isEmpty() || password.isEmpty()) {
+                    AlertDialogFragment dialog = AlertDialogFragment
+                            .newInstance(getString(R.string.login_error_message)); // Why getString?
+                    dialog.show(getFragmentManager(), "error_dialog");
+                }
+                else {
+                    // Login
+
+                    // ----- Show ProgressBar -----
+
+                    ParseUser.logInInBackground(username, password, new LogInCallback() { // We don't need an instance of an object to call a class method
+                        @Override
+                        public void done(ParseUser parseUser, ParseException e) {
+
+                            // ----- Hide ProgressBar -----
+
+                            if (parseUser != null) {
+                                // Success
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                            else {
+                                AlertDialogFragment dialog = AlertDialogFragment
+                                        .newInstance((e.getMessage())); // Why getString?
+                                dialog.show(getFragmentManager(), "error_dialog");
+                            }
+                        }
+                    });
+                }
             }
         });
     }

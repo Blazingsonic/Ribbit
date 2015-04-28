@@ -12,4 +12,7 @@
     <string name="email_text">Email</string>
     <string name="signup_button_text">Signup</string>
     <string name="signup_button_label">Signup</string>
+    <string name="signup_error_message">Please make sure you enter the Username, Password and Email</string>
+    <string name="login_error_message">Please make sure you enter a Username and Password-</string>
+    <string name="menu_logout_label">Logout</string>
 </resources>

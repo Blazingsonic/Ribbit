@@ -11,7 +11,6 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/usernameText"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -21,17 +20,16 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/passwordText"
         android:layout_below="@+id/usernameText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="@string/password_placeholder"/>
+        android:hint="@string/password_placeholder"
+        android:password="true"/>
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/emailText"
         android:layout_below="@+id/passwordText"
         android:layout_alignParentLeft="true"
