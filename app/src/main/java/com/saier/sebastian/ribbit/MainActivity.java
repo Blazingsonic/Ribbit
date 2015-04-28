@@ -1,16 +1,18 @@
 package com.saier.sebastian.ribbit;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-
 
 public class MainActivity extends FragmentActivity {
 
@@ -22,15 +24,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
-
-        mTabHost.addTab(mTabHost.newTabSpec("tab1").setIndicator("Tab1"),
-                Tab1Fragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("tab2").setIndicator("Tab2"),
-                Tab2Fragment.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("tab3").setIndicator("Tab3"),
-                Tab3Fragment.class, null);
+        ViewPager pager = (ViewPager) findViewById(R.id.viewPager);
+        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 
         // Check if logged in
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -39,6 +34,28 @@ public class MainActivity extends FragmentActivity {
         }
         else {
             //navigateToLogin();
+        }
+    }
+
+    private class MyPagerAdapter extends FragmentPagerAdapter {
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int pos) {
+            switch(pos) {
+
+                case 0: return FirstFragment.newInstance("FirstFragment, Instance 1");
+                case 1: return SecondFragment.newInstance("SecondFragment, Instance 1");
+                default: return FirstFragment.newInstance("ThirdFragment, Default");
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 5;
         }
     }
 

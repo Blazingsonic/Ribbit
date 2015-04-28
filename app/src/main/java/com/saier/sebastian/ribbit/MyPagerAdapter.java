@@ -9,11 +9,11 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by Sebastian on 28.04.2015.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class MyPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public MyPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
     }
