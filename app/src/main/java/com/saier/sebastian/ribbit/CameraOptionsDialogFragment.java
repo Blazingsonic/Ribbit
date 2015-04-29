@@ -31,6 +31,8 @@ public class CameraOptionsDialogFragment extends DialogFragment { // Refactor th
     public static final int MEDIA_TYPE_IMAGE = 4;
     public static final int MEDIA_TYPE_VIDEO = 5;
 
+    public static final int FILE_SIZE_LIMIT = 1024 * 1024 * 10; // 10MB
+
     public static Uri mMediaUri; // Uniform Resource Identifier - path to a specific file in our Android system
 
     private DialogInterface.OnClickListener mDialogListener =
@@ -70,6 +72,10 @@ public class CameraOptionsDialogFragment extends DialogFragment { // Refactor th
                             getActivity().startActivityForResult(choosePhotoIntent, CHOOSE_PICTURE_REQUEST);
                             break;
                         case 3:
+                            Intent chooseVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                            chooseVideoIntent.setType("video/*");
+                            Toast.makeText(getActivity(), "The selected video must be less than 10MB", Toast.LENGTH_LONG).show();
+                            getActivity().startActivityForResult(chooseVideoIntent, CHOOSE_VIDEO_REQUEST);
                             break;
                     }
                 }

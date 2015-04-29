@@ -1,13 +1,17 @@
 package com.saier.sebastian.ribbit;
 
+import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,29 +23,28 @@ import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 
-public class EditFriendsActivity extends ActionBarActivity {
+public class RecipientsActivity extends ActionBarActivity {
 
-    public static final String TAG = EditFriendsActivity.class.getSimpleName();
+    public static final String TAG = RecipientsActivity.class.getSimpleName();
 
-    private List<ParseUser> mUsers;
+    private List<ParseUser> mFriends;
     private ParseRelation<ParseUser> mFriendsRelation;
     private ParseUser mCurrentUser;
 
-    @InjectView(R.id.friendsListView) ListView mListView; // Update to RecyclerView
+    @InjectView(R.id.recipientsListView) ListView mListView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // ----- Show ProgressBar -----
 
-        setContentView(R.layout.activity_edit_friends);
+        setContentView(R.layout.activity_recipients);
         ButterKnife.inject(this);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -49,11 +52,11 @@ public class EditFriendsActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (view.isSelected() == true) { // Condition is always wrong
                     // Add friend
-                    mFriendsRelation.add(mUsers.get(position)); // Frontend
+                    mFriendsRelation.add(mFriends.get(position)); // Frontend
                 }
                 else {
                     // Remove friend
-                    mFriendsRelation.add(mUsers.get(position));
+                    mFriendsRelation.add(mFriends.get(position));
                     //mFriendsRelation.remove(mUsers.get(position));
                 }
 
@@ -70,69 +73,40 @@ public class EditFriendsActivity extends ActionBarActivity {
     }
 
 
-    // ADD multiple check mode
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         ButterKnife.inject(this);
 
         mCurrentUser = ParseUser.getCurrentUser();
         mFriendsRelation = mCurrentUser.getRelation(ParseConstants.KEY_FRIENDS_RELATION);
 
-        ParseQuery<ParseUser> query = ParseUser.getQuery(); // ParseQuery is a generic type
-        query.orderByAscending(ParseConstants.KEY_USERNAME);
-        query.setLimit(1000);
+        ParseQuery<ParseUser> query = mFriendsRelation.getQuery();
+        query.addAscendingOrder(ParseConstants.KEY_USERNAME);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> parseUsers, ParseException e) {
-
-                // ----- Hide ProgressBar -----
-
                 if (e == null) {
-                    // Success
-                    mUsers = parseUsers;
-                    String[] usernames = new String[mUsers.size()];
+                    mFriends = parseUsers;
+
+                    String[] usernames = new String[mFriends.size()];
                     int i = 0;
-                    for (ParseUser user : mUsers) {
+                    for (ParseUser user : mFriends) {
                         usernames[i] = user.getUsername();
                         i++;
                     }
+
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>( // Make it custom
-                            EditFriendsActivity.this,
+                            RecipientsActivity.this,
                             android.R.layout.simple_list_item_single_choice,
                             usernames);
                     mListView.setAdapter(adapter);
-
-                    addFriendCheckmarks();
                 }
                 else {
                     Log.e(TAG, e.getMessage());
                     AlertDialogFragment dialog = AlertDialogFragment
                             .newInstance(getString(R.string.friends_list_error_message)); // Why getString?
-                    dialog.show(getFragmentManager(), "error_dialog");
-                }
-            }
-        });
-    }
-
-    private void addFriendCheckmarks() {
-        mFriendsRelation.getQuery().findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> parseUsers, ParseException e) {
-                if (e == null) {
-                    // Look for a match
-                    for (int i = 0; i < mUsers.size(); i++) {
-                        ParseUser user = mUsers.get(i);
-
-                        for (ParseUser friend : parseUsers) {
-                            if (friend.getObjectId().equals(user.getObjectId())) { // .equals is better suited for strings in java
-                                 mListView.setItemChecked(i, true);
-                            }
-                        }
-                    }
-                }
-                else {
-                    Log.e(TAG, e.getMessage());
+                    //dialog.show(getFragmentManager(), "error_dialog");
                 }
             }
         });
@@ -141,7 +115,7 @@ public class EditFriendsActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_friends, menu);
+        getMenuInflater().inflate(R.menu.menu_recipients, menu);
         return true;
     }
 

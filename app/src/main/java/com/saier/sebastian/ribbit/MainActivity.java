@@ -19,6 +19,10 @@ import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -85,6 +89,69 @@ public class MainActivity extends FragmentActivity {
         startActivity(intent);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // Add it to the Gallery
+
+            if (requestCode == CameraOptionsDialogFragment.CHOOSE_PICTURE_REQUEST ||
+                    requestCode == CameraOptionsDialogFragment.CHOOSE_VIDEO_REQUEST) {
+                if (data == null) {
+                    Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    CameraOptionsDialogFragment.mMediaUri = data.getData();
+                }
+
+                Log.i(TAG, "Media URI: " + CameraOptionsDialogFragment.mMediaUri);
+                if (requestCode == CameraOptionsDialogFragment.CHOOSE_VIDEO_REQUEST) {
+                    // make sure the file is less than 10MB
+                    int fileSize = 0;
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContentResolver().openInputStream(CameraOptionsDialogFragment.mMediaUri);
+                        fileSize = inputStream.available();
+                    }
+                    catch (FileNotFoundException e) {
+                        Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    catch (IOException e) {
+                        Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    finally { // Always gets excecuted
+                        try {
+                            inputStream.close();
+                        }
+                        catch (IOException e) {
+                            // This is intentionally blank
+                        }
+                    }
+
+                    if (fileSize >= CameraOptionsDialogFragment.FILE_SIZE_LIMIT) {
+                        Toast.makeText(this, "The selected file is too large! Select a new file.", Toast.LENGTH_LONG);
+                        return;
+                    }
+                }
+            }
+            else {
+                Log.e(TAG, "the results are ok");
+                Intent mediaScantIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                mediaScantIntent.setData(CameraOptionsDialogFragment.mMediaUri);
+                sendBroadcast(mediaScantIntent);
+            }
+
+            Intent recipientsIntent = new Intent(this, RecipientsActivity.class);
+            recipientsIntent.setData(CameraOptionsDialogFragment.mMediaUri);
+            startActivity(recipientsIntent);
+        }
+        else if (resultCode != RESULT_CANCELED) {
+            Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,32 +175,5 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK) {
-            // Add it to the Gallery
-
-            if (requestCode == CameraOptionsDialogFragment.CHOOSE_PICTURE_REQUEST) {
-                if (data == null) {
-                    Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    CameraOptionsDialogFragment.mMediaUri = data.getData();
-                }
-            }
-            else {
-                Log.e(TAG, "the results are ok");
-                Intent mediaScantIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                mediaScantIntent.setData(CameraOptionsDialogFragment.mMediaUri);
-                sendBroadcast(mediaScantIntent);
-            }
-        }
-        else if (resultCode != RESULT_CANCELED) {
-            Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
-        }
     }
 }
