@@ -1,5 +1,6 @@
 package com.saier.sebastian.ribbit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 
@@ -23,10 +26,12 @@ public class MainActivity extends FragmentActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    private String[] mCameraOptions;
     private FragmentTabHost mTabHost;
 
     @InjectView(R.id.editFriendsButton) Button mEditFriendsButton;
     @InjectView(R.id.logoutButton) Button mLogoutButton;
+    @InjectView(R.id.cameraImageView) ImageView mCameraImageView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +63,16 @@ public class MainActivity extends FragmentActivity {
             public void onClick(View v) {
                 ParseUser.logOut();
                 navigateToLogin();
+            }
+        });
+
+        mCameraImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCameraOptions = getResources().getStringArray(R.array.cameraOptions);
+                CameraOptionsDialogFragment dialog = CameraOptionsDialogFragment
+                        .newInstance(mCameraOptions); // Why getString?
+                dialog.show(getFragmentManager(), "error_dialog");
             }
         });
     }
@@ -93,5 +108,32 @@ public class MainActivity extends FragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            // Add it to the Gallery
+
+            if (requestCode == CameraOptionsDialogFragment.CHOOSE_PICTURE_REQUEST) {
+                if (data == null) {
+                    Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    CameraOptionsDialogFragment.mMediaUri = data.getData();
+                }
+            }
+            else {
+                Log.e(TAG, "the results are ok");
+                Intent mediaScantIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                mediaScantIntent.setData(CameraOptionsDialogFragment.mMediaUri);
+                sendBroadcast(mediaScantIntent);
+            }
+        }
+        else if (resultCode != RESULT_CANCELED) {
+            Toast.makeText(this, "Sorry, there was an error", Toast.LENGTH_LONG).show();
+        }
     }
 }
