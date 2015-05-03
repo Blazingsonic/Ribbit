@@ -146,6 +146,17 @@ public class MainActivity extends FragmentActivity {
 
             Intent recipientsIntent = new Intent(this, RecipientsActivity.class);
             recipientsIntent.setData(CameraOptionsDialogFragment.mMediaUri);
+
+            String fileType;
+            if (requestCode == CameraOptionsDialogFragment.CHOOSE_PICTURE_REQUEST
+                    || requestCode == CameraOptionsDialogFragment.TAKE_PICTURE_REQUEST) {
+                fileType = ParseConstants.TYPE_IMAGE;
+            }
+            else {
+                fileType = ParseConstants.TYPE_VIDEO;
+            }
+            recipientsIntent.putExtra(ParseConstants.KEY_FILE_TYPE, fileType);
+
             startActivity(recipientsIntent);
         }
         else if (resultCode != RESULT_CANCELED) {

@@ -14,10 +14,21 @@
         android:listSelector="#11FFFF"
         android:state_activated="true"/>
 
-    <TextView
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@android:id/empty"
-        android:text="Choose some friends first!"/>
+        android:text="Choose some friends first!"/>-->
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:id="@+id/sendButton"
+        android:layout_below="@+id/recipientsListView"
+        android:layout_centerHorizontal="true"
+        android:background="#aaffffff"
+        android:textColor="#000000"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

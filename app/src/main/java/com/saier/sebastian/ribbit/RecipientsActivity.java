@@ -14,15 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -36,8 +43,11 @@ public class RecipientsActivity extends ActionBarActivity {
     private List<ParseUser> mFriends;
     private ParseRelation<ParseUser> mFriendsRelation;
     private ParseUser mCurrentUser;
+    private Uri mMediaUri;
+    private String mFileType;
 
     @InjectView(R.id.recipientsListView) ListView mListView;
+    @InjectView(R.id.sendButton) Button mSendButton;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,26 +60,24 @@ public class RecipientsActivity extends ActionBarActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (view.isSelected() == true) { // Condition is always wrong
-                    // Add friend
-                    mFriendsRelation.add(mFriends.get(position)); // Frontend
+                mSendButton.setVisibility(View.VISIBLE);
+
+                ParseObject message = createMessage();
+                if (message == null) {
+                    // Error
+                    AlertDialogFragment dialog = AlertDialogFragment
+                            .newInstance(getString(R.string.error_selecting_file)); // Why getString?
+                    dialog.show(getFragmentManager(), "error_dialog");
                 }
                 else {
-                    // Remove friend
-                    mFriendsRelation.add(mFriends.get(position));
-                    //mFriendsRelation.remove(mUsers.get(position));
+                    send(message);
+                    finish(); // Toasts live across activity changes
                 }
-
-                mCurrentUser.saveInBackground(new SaveCallback() { // Backend
-                    @Override
-                    public void done(ParseException e) {
-                        if (e != null) {
-                            Log.e(TAG, e.getMessage());
-                        }
-                    }
-                });
             }
         });
+
+        mMediaUri = getIntent().getData(); // get data from MainActivity
+        mFileType = getIntent().getExtras().getString(ParseConstants.KEY_FILE_TYPE); // get extra from MainActivity
     }
 
 
@@ -107,6 +115,61 @@ public class RecipientsActivity extends ActionBarActivity {
                     AlertDialogFragment dialog = AlertDialogFragment
                             .newInstance(getString(R.string.friends_list_error_message)); // Why getString?
                     //dialog.show(getFragmentManager(), "error_dialog");
+                }
+            }
+        });
+    }
+
+    private ParseObject createMessage() {
+        ParseObject message = new ParseObject(ParseConstants.CLASS_MESSAGES);
+        message.put(ParseConstants.KEY_SENDER_ID, ParseUser.getCurrentUser().getObjectId());
+        message.put(ParseConstants.KEY_SENDER_NAME, ParseUser.getCurrentUser().getUsername());
+        message.put(ParseConstants.KEY_RECIPIENT_IDS, getRecipientIds());
+        message.put(ParseConstants.KEY_FILE_TYPE, mFileType);
+
+        byte[] fileBytes = FileHelper.getByteArrayFromFile(this, mMediaUri);
+
+        if (fileBytes == null) {
+            return null;
+        }
+        else {
+            if (mFileType.equals(ParseConstants.TYPE_IMAGE)) {
+                fileBytes = FileHelper.reduceImageForUpload(fileBytes);
+            }
+
+            String fileName = FileHelper.getFileName(this, mMediaUri, mFileType);
+            ParseFile file = new ParseFile(fileName, fileBytes);
+            message.put(ParseConstants.KEY_FILE, file);
+
+            return message;
+        }
+    }
+
+    private ArrayList<String> getRecipientIds() {
+        ArrayList<String> recipientIds = new ArrayList<String>();
+        for (int i = 0; i < mListView.getCount(); i++) {
+            if (mListView.isItemChecked(i)) { // This condition doesn't seem to work properly
+                recipientIds.add(mFriends.get(i).getObjectId());
+            }
+            else {
+                recipientIds.add(mFriends.get(i).getObjectId()); // In this case every id gets sent to Parse
+            }
+        }
+        return recipientIds;
+    }
+
+    private void send(ParseObject message) {
+        message.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    // Success
+                    Toast.makeText(RecipientsActivity.this, "Message sent!", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    AlertDialogFragment dialog = AlertDialogFragment
+                            .newInstance(getString(R.string.error_sending_message)); // Why getString?
+                    dialog.show(getFragmentManager(), "error_dialog");
                 }
             }
         });
