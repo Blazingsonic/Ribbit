@@ -1,4 +1,4 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui;
 
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -6,72 +6,68 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.ui.fragments.AlertDialogFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 
-public class LoginActivity extends ActionBarActivity {
+public class SignupActivity extends ActionBarActivity {
 
     @InjectView(R.id.usernameText) EditText mUsername;
     @InjectView(R.id.passwordText) EditText mPassword;
-    @InjectView(R.id.loginButton) Button mLoginButton;
-
-    @InjectView(R.id.signUpText) TextView mSignupText;
+    @InjectView(R.id.emailText) EditText mEmail;
+    @InjectView(R.id.signupButton) Button mSignupButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
         ButterKnife.inject(this);
 
-        mSignupText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        mLoginButton.setOnClickListener(new View.OnClickListener() { // How can we use the listener with Butterknife?
+        mSignupButton.setOnClickListener(new View.OnClickListener() { // How can we use the listener with Butterknife?
             @Override
             public void onClick(View v) {
                 // Check the values
                 String username = mUsername.getText().toString(); // toString because the format is 'Editable'
                 String password = mPassword.getText().toString(); // We don't need to initialize these variables with Butterknife
                                                                   // because they aren't views, but normal Strings in this method
+                String email = mEmail.getText().toString();
 
                 username = username.trim(); // We don't want any whitespace in the values
                 password = password.trim();
+                email = email.trim();
 
-                if (username.isEmpty() || password.isEmpty()) {
+                if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
                     AlertDialogFragment dialog = AlertDialogFragment
-                            .newInstance(getString(R.string.login_error_message)); // Why getString?
+                            .newInstance(getString(R.string.signup_error_message)); // Why getString?
                     dialog.show(getFragmentManager(), "error_dialog");
                 }
                 else {
-                    // Login
+                    // Create the new user
 
                     // ----- Show ProgressBar -----
 
-                    ParseUser.logInInBackground(username, password, new LogInCallback() { // We don't need an instance of an object to call a class method
+                    ParseUser newUser = new ParseUser();
+                    newUser.setUsername(username);
+                    newUser.setPassword(password);
+                    newUser.setEmail(email);
+                    newUser.signUpInBackground(new SignUpCallback() {
                         @Override
-                        public void done(ParseUser parseUser, ParseException e) {
+                        public void done(ParseException e) {
 
                             // ----- Hide ProgressBar -----
 
-                            if (parseUser != null) {
+                            if (e == null) {
                                 // Success
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(SignupActivity.this, MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
@@ -92,7 +88,7 @@ public class LoginActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
+        getMenuInflater().inflate(R.menu.menu_signup, menu);
         return true;
     }
 

@@ -1,10 +1,11 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.widget.RecyclerView;
+
+import com.saier.sebastian.ribbit.ui.fragments.FriendsFragment;
+import com.saier.sebastian.ribbit.ui.fragments.InboxFragment;
 
 /**
  * Created by Sebastian on 28.04.2015.

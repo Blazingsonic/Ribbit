@@ -1,4 +1,4 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +12,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.saier.sebastian.ribbit.R;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

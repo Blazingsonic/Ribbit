@@ -1,33 +1,27 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.saier.sebastian.ribbit.ParseConstants;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.adapters.MyPagerAdapter;
+import com.saier.sebastian.ribbit.ui.fragments.CameraOptionsDialogFragment;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

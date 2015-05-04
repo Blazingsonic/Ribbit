@@ -1,17 +1,12 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui;
 
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,7 +14,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -27,8 +21,11 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.saier.sebastian.ribbit.FileHelper;
+import com.saier.sebastian.ribbit.ParseConstants;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.ui.fragments.AlertDialogFragment;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

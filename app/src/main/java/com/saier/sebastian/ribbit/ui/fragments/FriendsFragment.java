@@ -1,4 +1,4 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui.fragments;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -10,18 +10,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
+import com.saier.sebastian.ribbit.ParseConstants;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.adapters.FriendsAdapter;
 
 import java.util.List;
-
-import butterknife.ButterKnife;
 
 /**
  * Created by Sebastian on 28.04.2015.

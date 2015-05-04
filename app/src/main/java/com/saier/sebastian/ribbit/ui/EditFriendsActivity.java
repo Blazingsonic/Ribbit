@@ -1,9 +1,7 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,8 +16,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.saier.sebastian.ribbit.ParseConstants;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.ui.fragments.AlertDialogFragment;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import butterknife.ButterKnife;

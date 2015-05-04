@@ -1,4 +1,4 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

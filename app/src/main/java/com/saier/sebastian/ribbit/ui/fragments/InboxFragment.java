@@ -1,4 +1,4 @@
-package com.saier.sebastian.ribbit;
+package com.saier.sebastian.ribbit.ui.fragments;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -9,14 +9,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.saier.sebastian.ribbit.ParseConstants;
+import com.saier.sebastian.ribbit.R;
+import com.saier.sebastian.ribbit.adapters.InboxAdapter;
 
 import java.util.List;
 
@@ -75,14 +76,6 @@ public class InboxFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
-
-        /*String[] dataset = new String[50];
-        for (int i = 0; i < dataset.length; i++) {
-            dataset[i] = "item" + i;
-        }
-
-        InboxAdapter mAdapter = new InboxAdapter(dataset, getActivity());
-        mRecyclerView.setAdapter(mAdapter);*/
 
         super.onViewCreated(view, savedInstanceState);
     }
