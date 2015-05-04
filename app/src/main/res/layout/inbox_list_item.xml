@@ -3,7 +3,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="64dp"
+                android:paddingLeft="32dp"
                 android:paddingRight="32dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
@@ -12,21 +12,24 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/dayNameLabel"
+        android:id="@+id/senderLabel"
         android:layout_centerVertical="true"
         android:textColor="#ffffffff"
         android:textSize="20sp"
-        tools:text="Wednesday"
-        android:paddingLeft="10dp"/>
+        tools:text="Sender"
+        android:paddingLeft="5dp"
+        android:paddingTop="10dp"/>
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/temperatureLabel"
-        android:gravity="center"
-        android:textColor="#000000"
-        tools:text="100"
-        android:height="40dp"
-        android:focusableInTouchMode="true"/>
+        android:id="@+id/messageIcon"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/senderLabel"
+        android:layout_toEndOf="@+id/senderLabel"
+        android:layout_marginLeft="10dp"
+        android:nestedScrollingEnabled="false"
+        android:src="@mipmap/ic_action_picture"
+        android:paddingTop="10dp"/>
 
 </RelativeLayout>

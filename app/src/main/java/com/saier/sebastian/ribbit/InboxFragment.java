@@ -9,7 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * Created by Sebastian on 28.04.2015.
@@ -23,6 +32,7 @@ public class InboxFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private List<ParseObject> mMessages;
 
     public InboxFragment() {
     }
@@ -66,13 +76,13 @@ public class InboxFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        String[] dataset = new String[50];
+        /*String[] dataset = new String[50];
         for (int i = 0; i < dataset.length; i++) {
             dataset[i] = "item" + i;
         }
 
         InboxAdapter mAdapter = new InboxAdapter(dataset, getActivity());
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);*/
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -80,5 +90,32 @@ public class InboxFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onResume() { // in a fragment onResume() is supposed to be public, instead of protected
+        super.onResume();
+
+        ParseQuery<ParseObject> query = new ParseQuery(ParseConstants.CLASS_MESSAGES);
+        query.whereEqualTo(ParseConstants.KEY_RECIPIENT_IDS, ParseUser.getCurrentUser().getObjectId());
+        query.addDescendingOrder(ParseConstants.KEY_CREATED_AT);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> messages, ParseException e) {
+                if (e == null) {
+                    mMessages = messages;
+
+                    String[] usernames = new String[mMessages.size()];
+                    int i = 0;
+                    for (ParseObject message : mMessages) {
+                        usernames[i] = message.getString(ParseConstants.KEY_SENDER_NAME);
+                        i++;
+                    }
+
+                    InboxAdapter mAdapter = new InboxAdapter(mMessages, getActivity());
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+        });
     }
 }

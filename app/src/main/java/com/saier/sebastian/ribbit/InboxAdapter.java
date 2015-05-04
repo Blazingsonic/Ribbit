@@ -5,54 +5,55 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.parse.ParseObject;
+
+import java.util.List;
 
 /**
  * Created by Sebastian on 28.04.2015.
  */
 public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> {
 
-    private String[] mDataset;
+    private List<ParseObject> mMessages;
     private Context mContext;
 
-    public InboxAdapter(String[] dataset, Context context) {
-        mDataset = dataset;
+    public InboxAdapter(List<ParseObject> messages, Context context) {
+        mMessages = messages;
         mContext = context;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView mTextView;
-        public TextView mNew;
+        public TextView mSenderLabel;
+        public ImageView mMessageIcon;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView) itemView.findViewById(R.id.dayNameLabel);
-            itemView.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(
-                            mContext,
-                            "onItemClick - " + getPosition() + " - "
-                                    + mTextView.getText().toString() + " - "
-                                    + mDataset[getPosition()], 0).show();
-                }
-            });
-            mNew = (TextView) itemView.findViewById(R.id.temperatureLabel);
-            mNew.setText("Hellllooo");
+            mSenderLabel = (TextView) itemView.findViewById(R.id.senderLabel);
+            mMessageIcon = (ImageView) itemView.findViewById(R.id.messageIcon);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return mMessages.size();
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mDataset[position]);
+        ParseObject message = mMessages.get(position);
+
+        if (message.getString(ParseConstants.KEY_FILE_TYPE).equals(ParseConstants.TYPE_IMAGE)) {
+            holder.mMessageIcon.setImageResource(R.mipmap.ic_action_picture);
+        }
+        else {
+            holder.mMessageIcon.setImageResource(R.mipmap.ic_action_camera);
+        }
+        holder.mSenderLabel.setText(message.getString(ParseConstants.KEY_SENDER_NAME));
     }
 
     @Override
@@ -62,5 +63,4 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
-
 }
