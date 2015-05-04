@@ -49,21 +49,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
             itemView.setOnClickListener(this);
         }
 
-        /*ParseObject message = mMessages.get(getAdapterPosition()); // or getLayoutPosition
-        String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
-        ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
-        Uri fileUri = Uri.parse(file.getUrl());
-
-        if (messageType.equals(ParseConstants.TYPE_IMAGE)) {
-            // View the image
-            Intent intent = new Intent(mContext, ViewImageActivity.class);
-            intent.setData(fileUri);
-            mContext.startActivity(intent);
-        }
-        else {
-            // View the video
-        }*/
-
         @Override
         public void onClick(View v) {
                 mListener.onPotato(v);
@@ -94,11 +79,28 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
+        final View view = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.inbox_list_item, parent, false);
         ViewHolder holder = new ViewHolder(view, new InboxAdapter.ViewHolder.IMyViewHolderClicks() {
             public void onPotato(View caller) {
-                Log.i("hello herre", "fefef");
+                Intent intent = new Intent(mContext, ViewImageActivity.class);
+                //intent.setData(fileUri);
+                mContext.startActivity(intent);
+
+                /*ParseObject message = mMessages.get(); // or getLayoutPosition
+                String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
+                ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
+                Uri fileUri = Uri.parse(file.getUrl());
+
+                if (messageType.equals(ParseConstants.TYPE_IMAGE)) {
+                    // View the image
+                    Intent intent = new Intent(mContext, ViewImageActivity.class);
+                    intent.setData(fileUri);
+                    mContext.startActivity(intent);
+                }
+                else {
+                    // View the video
+                }*/
             }
         });
         return holder;
