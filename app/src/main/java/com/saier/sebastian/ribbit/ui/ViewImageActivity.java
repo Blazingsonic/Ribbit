@@ -8,6 +8,10 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.saier.sebastian.ribbit.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,6 +28,16 @@ public class ViewImageActivity extends ActionBarActivity {
         ButterKnife.inject(this);
 
         Uri imageUri = getIntent().getData();
+
+        Picasso.with(this).load(imageUri.toString()).into(mImageView); // with refers to the context
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 10 * 1000);
     }
 
 

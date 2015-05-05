@@ -105,8 +105,13 @@ public class InboxFragment extends Fragment {
                         i++;
                     }
 
-                    InboxAdapter mAdapter = new InboxAdapter(mMessages, getActivity());
-                    mRecyclerView.setAdapter(mAdapter);
+                    if (mRecyclerView.getAdapter() == null) { // Does this work?
+                        InboxAdapter mAdapter = new InboxAdapter(mMessages, getActivity());
+                        mRecyclerView.setAdapter(mAdapter);
+                    }
+                    else {
+                        ((InboxAdapter) mRecyclerView.getAdapter()).refill(mMessages);
+                    }
                 }
             }
         });

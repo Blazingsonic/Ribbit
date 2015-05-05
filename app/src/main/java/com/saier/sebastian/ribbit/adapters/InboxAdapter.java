@@ -14,10 +14,12 @@ import android.widget.TextView;
 import com.parse.Parse;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.saier.sebastian.ribbit.ParseConstants;
 import com.saier.sebastian.ribbit.R;
 import com.saier.sebastian.ribbit.ui.ViewImageActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,11 +53,11 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
 
         @Override
         public void onClick(View v) {
-                mListener.onPotato(v);
+                mListener.onPotato(v, this.getAdapterPosition());
         }
 
         public static interface IMyViewHolderClicks {
-            public void onPotato(View caller);
+            public void onPotato(View caller, int position);
         }
     }
 
@@ -82,12 +84,9 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
         final View view = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.inbox_list_item, parent, false);
         ViewHolder holder = new ViewHolder(view, new InboxAdapter.ViewHolder.IMyViewHolderClicks() {
-            public void onPotato(View caller) {
-                Intent intent = new Intent(mContext, ViewImageActivity.class);
-                //intent.setData(fileUri);
-                mContext.startActivity(intent);
+            public void onPotato(View caller, int position) {
 
-                /*ParseObject message = mMessages.get(); // or getLayoutPosition
+                ParseObject message = mMessages.get(position); // or getLayoutPosition
                 String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
                 ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
                 Uri fileUri = Uri.parse(file.getUrl());
@@ -100,9 +99,36 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.ViewHolder> 
                 }
                 else {
                     // View the video
-                }*/
+                    Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
+                    intent.setDataAndType(fileUri, "video/*");
+                    mContext.startActivity(intent);
+                }
+
+                // Delete the message
+                List<String> ids = message.getList(ParseConstants.KEY_RECIPIENT_IDS); // arrays and lists are usually pretty interchangeable
+
+                if (ids.size() == 1) {
+                    // last recipient - delete the whole thing!
+                    message.deleteInBackground();
+                }
+                else {
+                    // remove the recipient and save
+                    ids.remove(ParseUser.getCurrentUser().getObjectId());
+
+                    ArrayList<String> idsToRemove = new ArrayList<String>();
+                    idsToRemove.add(ParseUser.getCurrentUser().getObjectId());
+
+                    message.removeAll(ParseConstants.KEY_RECIPIENT_IDS, idsToRemove);
+                    message.saveInBackground();
+                }
             }
         });
         return holder;
+    }
+
+    public void refill(List<ParseObject> messages) {
+        mMessages.clear();
+        mMessages.addAll(messages);
+        notifyDataSetChanged();
     }
 }
